@@ -17,7 +17,7 @@ setup(name='flowws',
       description='Library for development of stage-based scientific workflows',
       entry_points={
           'console_scripts': [
-              'flowws_run = flowws:Workflow.from_command',
+              'flowws_run = flowws:Workflow.run_from_command',
           ],
       },
       extras_require={},

@@ -49,7 +49,8 @@ class Stage:
             parser.add_argument(name, default=arg.default,
                                 help=arg.description)
 
-        return cls(**vars(parser.parse_args(args)))
+        return cls(**{key: val for (key, val) in vars(parser.parse_args(args)).items()
+                      if val is not None})
 
     def run(self, scope, storage):
         pass

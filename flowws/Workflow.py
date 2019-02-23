@@ -14,7 +14,7 @@ class Workflow:
         return cls(stages)
 
     @classmethod
-    def from_command(cls, args=None, module_names='flowws_modules'):
+    def run_from_command(cls, args=None, module_names='flowws_modules', scope={}):
         modules = {}
         for entry_point in pkg_resources.iter_entry_points(module_names):
             modules[entry_point.name] = entry_point.load()
@@ -22,17 +22,28 @@ class Workflow:
         parser = argparse.ArgumentParser(
             description='Run a workflow')
         parser.add_argument('--directory', help='Storage directory to use')
+        parser.add_argument('-d', '--define', nargs=2, action='append', default=[],
+            help='Define a workflow-specific value')
         parser.add_argument('workflow', nargs=argparse.REMAINDER,
             help='Workflow description')
 
         args = parser.parse_args(args)
+
+        scope = dict(scope)
+        for (name, val) in args.define:
+            try:
+                val = eval(val)
+            except:
+                pass
+
+            scope[name] = val
 
         if args.directory:
             storage = DirectoryStorage(args.directory)
         else:
             storage = DirectoryStorage()
 
-        stages = [[]]
+        stages = []
         for word in args.workflow:
             if word in modules:
                 stages.append([])
@@ -40,15 +51,18 @@ class Workflow:
             stages[-1].append(word)
 
         workflow_stages = []
-        for stage in stages:
-            if not stage:
+        for description in stages:
+            if not description:
                 continue
 
-            stage_name, stage_args = stage[0], stage[1:]
+            stage_name, stage_args = description[0], description[1:]
             stage_cls = modules[stage_name]
-            workflow_stages.append(stage_cls.from_command(stage_args))
+            stage = stage_cls.from_command(stage_args)
+            assert stage is not None, 'Stage.from_command returned None'
 
-        return cls(workflow_stages, storage)
+            workflow_stages.append(stage)
+
+        return cls(workflow_stages, storage).run(scope)
 
     def run(self, scope={}):
         scope = dict(scope)
