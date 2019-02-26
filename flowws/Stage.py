@@ -20,10 +20,7 @@ class Stage:
         for arg_name in kwargs:
             if arg_name in usable_args:
                 specification = usable_args[arg_name]
-                if specification.type is not eval:
-                    value = specification.type(kwargs[arg_name])
-                else:
-                    value = kwargs[arg_name]
+                value = specification.validate(kwargs[arg_name])
                 arg_values[arg_name] = value
             else:
                 unused_args.append(arg_name)
@@ -44,13 +41,16 @@ class Stage:
         parser = argparse.ArgumentParser(
             prog=cls.__name__, description=cls.__doc__)
 
+        # map arg name -> Arg object
+        arg_objects = {}
         for arg in cls.ARGS:
-            name = '--{}'.format(arg.name.replace('_', '-'))
-            parser.add_argument(name, default=arg.default,
-                                help=arg.description)
+            arg_objects[arg.name] = arg
+            arg.register_parser(parser)
 
-        return cls(**{key: val for (key, val) in vars(parser.parse_args(args)).items()
-                      if val is not None})
+        arguments = {key: arg_objects[key].validate_cmd(val)
+                     for (key, val) in vars(parser.parse_args(args)).items()
+                     if val is not None}
+        return cls(**arguments)
 
     def run(self, scope, storage):
         pass
