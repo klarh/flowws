@@ -1,3 +1,5 @@
+import os
+
 class StorageTestBase:
     def test_basic_creation(self):
         with self.storage.open('test_file', 'w') as f:
@@ -27,3 +29,7 @@ class StorageTestBase:
         # appending to a file that doesn't exist should just create it
         with self.storage.open('new_file', 'a') as f:
             pass
+
+    def test_has_filename(self):
+        with self.storage.open('test.txt', 'a', on_filesystem=True) as f:
+            self.assertTrue(os.path.exists(f.name))
