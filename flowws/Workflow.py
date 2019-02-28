@@ -1,7 +1,8 @@
 import argparse
 import pkg_resources
 
-from . import DirectoryStorage
+from .DirectoryStorage import DirectoryStorage
+from .GetarStorage import GetarStorage
 
 class Workflow:
     def __init__(self, stages, storage):
@@ -21,7 +22,7 @@ class Workflow:
 
         parser = argparse.ArgumentParser(
             description='Run a workflow')
-        parser.add_argument('--directory', help='Storage directory to use')
+        parser.add_argument('--storage', help='Storage location to use')
         parser.add_argument('-d', '--define', nargs=2, action='append', default=[],
             help='Define a workflow-specific value')
         parser.add_argument('workflow', nargs=argparse.REMAINDER,
@@ -38,8 +39,14 @@ class Workflow:
 
             scope[name] = val
 
-        if args.directory:
-            storage = DirectoryStorage(args.directory)
+        if args.storage:
+            location = args.storage
+
+            if any(location.endswith(suffix)
+                   for suffix in ('.zip', '.tar', '.sqlite')):
+                storage = GetarStorage(location)
+            else:
+                storage = DirectoryStorage(location)
         else:
             storage = DirectoryStorage()
 
