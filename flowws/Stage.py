@@ -1,10 +1,30 @@
 import argparse
+import inspect
 import logging
 import sys
 
 from . import internal
 
 logger = logging.getLogger(__name__)
+
+def add_stage_arguments(cls):
+    """Adds the arguments specified in a class's ARGS entry to its docstring"""
+
+    if cls.__doc__ is None:
+        cls.__doc__ = ''
+
+    lines = inspect.cleandoc(cls.__doc__).splitlines()
+    # have only one blank line before args
+    while lines and (not lines[-1] or lines[-1].isspace()):
+        lines.pop()
+    lines.append('')
+
+    for arg in cls.ARGS:
+        lines.append(':param {}: {}'.format(arg.name, arg.help))
+
+    cls.__doc__ = '\n'.join(lines)
+
+    return cls
 
 class Stage:
     """Base class for the building blocks of workflows
