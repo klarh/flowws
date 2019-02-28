@@ -42,7 +42,7 @@ class NoopBuffer:
 
 class Storage:
 
-    def open(self, filename, mode='r', modifiers=[], on_filesystem=False, noop=True):
+    def open(self, filename, mode='r', modifiers=[], on_filesystem=False, noop=False):
         prefix, suffix = os.path.splitext(filename)
         full_name = '.'.join([prefix] + modifiers + [suffix[1:]])
 
