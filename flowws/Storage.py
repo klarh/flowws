@@ -58,12 +58,12 @@ class Storage:
         raise NotImplementedError('Storage.open_stream')
 
     def open_file(self, full_name, mode):
-        if 'w' in mode:
+        if 'w' in mode or 'a' in mode:
             return FileWriterBuffer(
                 full_name, self.open_stream(full_name, mode))
-        else:
-            result = tempfile.NamedTemporaryFile(suffix=full_name)
-            with self.open_stream(full_name, mode) as src:
-                shutil.copyfileobj(src, result)
-            result.seek(0)
-            return result
+
+        result = tempfile.NamedTemporaryFile(suffix=full_name)
+        with self.open_stream(full_name, mode) as src:
+            shutil.copyfileobj(src, result)
+        result.seek(0)
+        return result
