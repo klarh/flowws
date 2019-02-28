@@ -7,6 +7,7 @@ class FileWriterBuffer:
         self.filename = filename
         self.stream_target = stream_target
         self.temp_buffer = tempfile.NamedTemporaryFile(filename)
+        self.name = self.temp_buffer.name
 
     def write(self, contents):
         return self.temp_buffer.write(contents)
@@ -23,11 +24,30 @@ class FileWriterBuffer:
         self.stream_target.close()
         self.temp_buffer.close()
 
+class NoopBuffer:
+    def __init__(self, filename):
+        self.name = filename
+
+    def write(self, *args, **kwargs):
+        pass
+
+    def __enter__(self, *args, **kwargs):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        pass
+
+    def close(self):
+        pass
+
 class Storage:
 
-    def open(self, filename, mode='r', modifiers=[], on_filesystem=False):
+    def open(self, filename, mode='r', modifiers=[], on_filesystem=False, noop=True):
         prefix, suffix = os.path.splitext(filename)
         full_name = '.'.join([prefix] + modifiers + [suffix[1:]])
+
+        if noop:
+            return NoopBuffer(full_name)
 
         if on_filesystem:
             return self.open_file(full_name, mode)
