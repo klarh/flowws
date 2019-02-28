@@ -6,16 +6,16 @@ class FileWriterBuffer:
     def __init__(self, filename, stream_target):
         self.filename = filename
         self.stream_target = stream_target
-        self.temp_buffer = tempfile.NamedTemporaryFile(filename)
+        self.temp_buffer = tempfile.NamedTemporaryFile(suffix=filename)
         self.name = self.temp_buffer.name
 
     def write(self, contents):
         return self.temp_buffer.write(contents)
 
-    def __enter__(self):
+    def __enter__(self, *args, **kwargs):
         return self
 
-    def __exit__(self):
+    def __exit__(self, *args, **kwargs):
         self.close()
 
     def close(self):
@@ -62,7 +62,7 @@ class Storage:
             return FileWriterBuffer(
                 full_name, self.open_stream(full_name, mode))
         else:
-            result = tempfile.NamedTemporaryFile(full_name)
+            result = tempfile.NamedTemporaryFile(suffix=full_name)
             with self.open_stream(full_name, mode) as src:
                 shutil.copyfileobj(src, result)
             result.seek(0)
