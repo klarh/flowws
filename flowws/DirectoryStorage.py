@@ -3,6 +3,7 @@ import os
 from .Storage import Storage
 
 class DirectoryStorage(Storage):
+    """Stores files directly on the filesystem"""
     def __init__(self, root=os.curdir, group=None):
         if group is not None:
             self.root = os.path.join(root, group)

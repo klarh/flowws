@@ -7,6 +7,24 @@ from . import internal
 logger = logging.getLogger(__name__)
 
 class Stage:
+    """Base class for the building blocks of workflows
+
+    Stage objects specify a discrete set of operations within a
+    Workflow. Each Stage object has its own set of parameters and
+    functionality that are then run in sequence when the workflow is
+    run.
+
+    Stages can be instantiated within python by directly passing in
+    arguments they take as keyword arguments, for example::
+
+        stages = [Initialize(seed=13), Run(parameter=1.5)]
+
+    Stages also can be instantiated from the command line using
+    `flowws.command`::
+
+        python -m flowws.command Initialize --seed 13 Run --parameter 1.5
+
+    """
     ArgumentSpecification = internal.ArgumentSpecification
 
     ARGS = []
@@ -34,10 +52,12 @@ class Stage:
 
     @classmethod
     def from_JSON(cls, json_object):
+        """Initialize this stage from a JSON representation"""
         return cls(**json_object)
 
     @classmethod
     def from_command(cls, args):
+        """Initialize this stage from a command-line description"""
         parser = argparse.ArgumentParser(
             prog=cls.__name__, description=cls.__doc__)
 
@@ -53,4 +73,5 @@ class Stage:
         return cls(**arguments)
 
     def run(self, scope, storage):
+        """Run the contents of this stage"""
         pass

@@ -10,6 +10,7 @@ class MatchError(Exception):
         return 'MatchError(pattern={}, value={})'.format(pattern, value)
 
 class PatternMatcher:
+    """Helper class for pattern matching inside command-line and other arguments"""
     MATCH_FUNCTIONS = {}
 
     @classmethod

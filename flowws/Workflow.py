@@ -5,17 +5,39 @@ from .DirectoryStorage import DirectoryStorage
 from .GetarStorage import GetarStorage
 
 class Workflow:
+    """Specify a complete sequence of operations to perform
+
+    Workflow objects specify a sequence of stages (operations to
+    perform) and a storage object to use (which could be a database,
+    archive file, or simply a directory on the filesystem). In
+    addition to direct creation within python, Workflows can be
+    deserialized from command line and JSON-based descriptions.
+
+    :param stages: List of `Stage` objects specifying the operations to perform
+    :param storage: `Storage` object specifying where results should be saved
+    """
     def __init__(self, stages, storage):
         self.stages = stages
         self.storage = storage
 
     @classmethod
     def from_JSON(cls, json_object):
+        """Construct a Workflow from a JSON object"""
         stages = json_object['stages']
+        # TODO add storage deserialization
         return cls(stages)
 
     @classmethod
     def run_from_command(cls, args=None, module_names='flowws_modules', scope={}):
+        """Construct a Workflow from a command-line description.
+
+        Stages are found based on setuptools entry_point specified
+        under `module_names`
+
+        :param args: List of command-line arguments (list of strings)
+        :param module_names: setuptools entry_point to use for module searches
+        :param scope: Dictionary of initial key-value pairs to pass to child Stages
+        """
         modules = {}
         for entry_point in pkg_resources.iter_entry_points(module_names):
             modules[entry_point.name] = entry_point.load()
@@ -72,6 +94,7 @@ class Workflow:
         return cls(workflow_stages, storage).run(scope)
 
     def run(self, scope={}):
+        """Run each stage inside this workflow"""
         scope = dict(scope)
         for stage in self.stages:
             stage.run(scope, self.storage)
