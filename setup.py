@@ -23,7 +23,7 @@ setup(name='flowws',
       },
       extras_require={},
       install_requires=[],
-      license='BSD',
+      license='MIT',
       packages=[
           'flowws',
       ],
