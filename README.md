@@ -7,7 +7,7 @@ storage locations and parse arguments in a uniform way for both python
 scripts and command-line-based execution.
 
 `flowws` is being developed in conjunction with
-[hoomd-flowws](https://github.com/klarh/hoomd-flowws), which
+[hoomd-flowws](https://github.com/klarh/hoomd_flowws), which
 implements a set of flowws modules for use with
 [hoomd-blue](https://github.com/glotzerlab/hoomd-blue).
 
