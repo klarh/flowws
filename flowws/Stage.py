@@ -38,9 +38,9 @@ class Stage:
         stages = [Initialize(seed=13), Run(parameter=1.5)]
 
     Stages also can be instantiated from the command line using
-    `flowws.command`::
+    `flowws.run`::
 
-        python -m flowws.command Initialize --seed 13 Run --parameter 1.5
+        python -m flowws.run Initialize --seed 13 Run --parameter 1.5
 
     """
 
