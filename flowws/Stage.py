@@ -3,8 +3,6 @@ import inspect
 import logging
 import sys
 
-from . import internal
-
 logger = logging.getLogger(__name__)
 
 def add_stage_arguments(cls):
@@ -45,7 +43,6 @@ class Stage:
         python -m flowws.command Initialize --seed 13 Run --parameter 1.5
 
     """
-    ArgumentSpecification = internal.ArgumentSpecification
 
     ARGS = []
 
