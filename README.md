@@ -16,6 +16,17 @@ implements a set of flowws modules for use with
 Install flowws from source using `pip`:
 
 ```
+pip install git+https://github.com/klarh/flowws.git#egg=flowws
+```
+
+## Documentation
+
+Browse more detailed documentation
+[online](https://flowws.readthedocs.io) or build the sphinx
+documentation from source:
+
+```
 git clone https://github.com/klarh/flowws
-pip install flowws
+cd flowws/doc
+make html
 ```
