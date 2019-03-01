@@ -73,7 +73,12 @@ class Stage:
     @classmethod
     def from_JSON(cls, json_object):
         """Initialize this stage from a JSON representation"""
-        return cls(**json_object)
+        return cls(**json_object['arguments'])
+
+    def to_JSON(self):
+        result = dict(type=type(self).__name__,
+                      arguments=dict(self.arguments))
+        return result
 
     @classmethod
     def from_command(cls, args):

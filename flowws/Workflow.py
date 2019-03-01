@@ -1,4 +1,5 @@
 import argparse
+import json
 import pkg_resources
 
 from .DirectoryStorage import DirectoryStorage
@@ -15,20 +16,54 @@ class Workflow:
 
     :param stages: List of `Stage` objects specifying the operations to perform
     :param storage: `Storage` object specifying where results should be saved
+    :param scope: Dictionary of key-value pairs specifying external input parameters
     """
-    def __init__(self, stages, storage):
+    def __init__(self, stages, storage, scope={}):
         self.stages = stages
         self.storage = storage
+        self.scope = dict(scope)
 
     @classmethod
-    def from_JSON(cls, json_object):
+    def from_JSON(cls, json_object, module_names='flowws_modules'):
         """Construct a Workflow from a JSON object"""
-        stages = json_object['stages']
-        # TODO add storage deserialization
-        return cls(stages)
+        modules = cls.get_named_modules(module_names)
+
+        storage_args = dict(json_object['storage'])
+        storage_type = storage_args.pop('type', 'DirectoryStorage')
+        if storage_type == 'DirectoryStorage':
+            storage = DirectoryStorage(**storage_args)
+        elif storage_type == 'GetarStorage':
+            storage = GetarStorage(**storage_args)
+        else:
+            raise NotImplementedError()
+
+        stages_json = json_object['stages']
+        stages = []
+        for stage_json in stages_json:
+            stage_json = dict(stage_json)
+            stage_cls = modules[stage_json.pop('type')]
+            stages.append(stage_cls.from_JSON(stage_json))
+
+        scope = json_object.get('scope', {})
+
+        return cls(stages, storage, scope)
+
+    def to_JSON(self):
+        stages = [stage.to_JSON() for stage in self.stages]
+        result = dict(storage=self.storage.to_JSON(),
+                      stages=stages,
+                      scope=self.scope)
+        return result
+
+    @staticmethod
+    def get_named_modules(module_names):
+        modules = {}
+        for entry_point in pkg_resources.iter_entry_points(module_names):
+            modules[entry_point.name] = entry_point.load()
+        return modules
 
     @classmethod
-    def run_from_command(cls, args=None, module_names='flowws_modules', scope={}):
+    def from_command(cls, args=None, module_names='flowws_modules', scope={}):
         """Construct a Workflow from a command-line description.
 
         Stages are found based on setuptools entry_point specified
@@ -38,28 +73,22 @@ class Workflow:
         :param module_names: setuptools entry_point to use for module searches
         :param scope: Dictionary of initial key-value pairs to pass to child Stages
         """
-        modules = {}
-        for entry_point in pkg_resources.iter_entry_points(module_names):
-            modules[entry_point.name] = entry_point.load()
+        modules = cls.get_named_modules(module_names)
 
         parser = argparse.ArgumentParser(
             description='Run a workflow')
         parser.add_argument('--storage', help='Storage location to use')
         parser.add_argument('-d', '--define', nargs=2, action='append', default=[],
             help='Define a workflow-specific value')
+        parser.add_argument('-m', '--module-names', default=module_names,
+            help='Registered module entry_point to search')
         parser.add_argument('workflow', nargs=argparse.REMAINDER,
             help='Workflow description')
 
         args = parser.parse_args(args)
 
         scope = dict(scope)
-        for (name, val) in args.define:
-            try:
-                val = eval(val)
-            except:
-                pass
-
-            scope[name] = val
+        storage = None
 
         if args.storage:
             location = args.storage
@@ -69,32 +98,48 @@ class Workflow:
                 storage = GetarStorage(location)
             else:
                 storage = DirectoryStorage(location)
-        else:
+        elif storage is None:
             storage = DirectoryStorage()
 
-        stages = []
-        for word in args.workflow:
-            if word in modules:
-                stages.append([])
+        if len(args.workflow) == 1 and args.workflow[0].endswith('.json'):
+            with open(args.workflow[0], 'r') as f:
+                json_description = json.load(f)
+            template_workflow = cls.from_JSON(json_description, module_names)
+            scope.update(template_workflow.scope)
+            storage = template_workflow.storage
+            workflow_stages = template_workflow.stages
+        else:
+            stages = []
+            for word in args.workflow:
+                if word in modules:
+                    stages.append([])
 
-            stages[-1].append(word)
+                stages[-1].append(word)
 
-        workflow_stages = []
-        for description in stages:
-            if not description:
-                continue
+            workflow_stages = []
+            for description in stages:
+                if not description:
+                    continue
 
-            stage_name, stage_args = description[0], description[1:]
-            stage_cls = modules[stage_name]
-            stage = stage_cls.from_command(stage_args)
-            assert stage is not None, 'Stage.from_command returned None'
+                stage_name, stage_args = description[0], description[1:]
+                stage_cls = modules[stage_name]
+                stage = stage_cls.from_command(stage_args)
+                assert stage is not None, 'Stage.from_command returned None'
 
-            workflow_stages.append(stage)
+                workflow_stages.append(stage)
 
-        return cls(workflow_stages, storage).run(scope)
+        for (name, val) in args.define:
+            try:
+                val = eval(val)
+            except:
+                pass
 
-    def run(self, scope={}):
+            scope[name] = val
+
+        return cls(workflow_stages, storage, scope)
+
+    def run(self):
         """Run each stage inside this workflow"""
-        scope = dict(scope)
+        scope = dict(self.scope)
         for stage in self.stages:
             stage.run(scope, self.storage)
