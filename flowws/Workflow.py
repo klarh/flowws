@@ -41,7 +41,7 @@ class Workflow:
         stages = []
         for stage_json in stages_json:
             stage_json = dict(stage_json)
-            stage_cls = modules[stage_json.pop('type')]
+            stage_cls = modules[stage_json.pop('type')].load()
             stages.append(stage_cls.from_JSON(stage_json))
 
         scope = json_object.get('scope', {})
@@ -59,7 +59,7 @@ class Workflow:
     def get_named_modules(module_names):
         modules = {}
         for entry_point in pkg_resources.iter_entry_points(module_names):
-            modules[entry_point.name] = entry_point.load()
+            modules[entry_point.name] = entry_point
         return modules
 
     @classmethod
@@ -122,7 +122,7 @@ class Workflow:
                     continue
 
                 stage_name, stage_args = description[0], description[1:]
-                stage_cls = modules[stage_name]
+                stage_cls = modules[stage_name].load()
                 stage = stage_cls.from_command(stage_args)
                 assert stage is not None, 'Stage.from_command returned None'
 
