@@ -73,8 +73,6 @@ class Workflow:
         :param module_names: setuptools entry_point to use for module searches
         :param scope: Dictionary of initial key-value pairs to pass to child Stages
         """
-        modules = cls.get_named_modules(module_names)
-
         parser = argparse.ArgumentParser(
             description='Run a workflow')
         parser.add_argument('--storage', help='Storage location to use')
@@ -86,6 +84,8 @@ class Workflow:
             help='Workflow description')
 
         args = parser.parse_args(args)
+
+        modules = cls.get_named_modules(args.module_names)
 
         scope = dict(scope)
         storage = None
