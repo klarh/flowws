@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import json
 import pkg_resources
 
@@ -46,6 +47,15 @@ class Workflow:
 
         scope = json_object.get('scope', {})
 
+        metadata = scope.get('metadata', {})
+        metadata['invocation'] = dict(
+            name='from_JSON', source=json_object,
+            module_names=module_names,
+            time=datetime.datetime.now().isoformat(),
+            time_utc=datetime.datetime.utcnow().isoformat(),
+        )
+        scope['metadata'] = metadata
+
         return cls(stages, storage, scope)
 
     def to_JSON(self):
@@ -83,12 +93,22 @@ class Workflow:
         parser.add_argument('workflow', nargs=argparse.REMAINDER,
             help='Workflow description')
 
+        args_str = args
         args = parser.parse_args(args)
 
         modules = cls.get_named_modules(args.module_names)
 
         scope = dict(scope)
         storage = None
+
+        metadata = scope.get('metadata', {})
+        metadata['invocation'] = dict(
+            name='from_command', arguments=args_str,
+            module_names=module_names, initial_scope=dict(scope),
+            time=datetime.datetime.now().isoformat(),
+            time_utc=datetime.datetime.utcnow().isoformat(),
+        )
+        scope['metadata'] = metadata
 
         if args.storage:
             location = args.storage
