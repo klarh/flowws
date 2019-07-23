@@ -114,7 +114,11 @@ class Workflow:
                 if word in modules:
                     stages.append([])
 
-                stages[-1].append(word)
+                try:
+                    stages[-1].append(word)
+                except IndexError:
+                    raise RuntimeError(
+                        'Failed finding module {}'.format(word))
 
             workflow_stages = []
             for description in stages:
