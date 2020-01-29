@@ -47,14 +47,14 @@ class Stage:
     ARGS = []
 
     def __init__(self, **kwargs):
-        usable_args = {arg.name: arg for arg in self.ARGS}
+        self.arg_specifications = {arg.name: arg for arg in self.ARGS}
         unused_args = []
         arg_values = {arg.name: arg.default for arg in self.ARGS
                       if arg.default is not None}
 
         for arg_name in kwargs:
-            if arg_name in usable_args:
-                specification = usable_args[arg_name]
+            if arg_name in self.arg_specifications:
+                specification = self.arg_specifications[arg_name]
                 value = specification.validate(kwargs[arg_name])
                 arg_values[arg_name] = value
             else:
