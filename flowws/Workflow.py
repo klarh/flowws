@@ -165,5 +165,6 @@ class Workflow:
     def run(self):
         """Run each stage inside this workflow"""
         scope = dict(self.scope)
+        scope['workflow'] = self
         for stage in self.stages:
             stage.run(scope, self.storage)
