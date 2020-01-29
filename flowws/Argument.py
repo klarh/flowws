@@ -3,10 +3,33 @@ import re
 
 from .PatternMatcher import match
 
+class Range:
+    """Define a range of numeric values
+
+    :param min: minimum value of the range
+    :param max: maximum value of the range
+    :param inclusive: boolean or two booleans indicating whether the left and right endpoints should be included (True) or not in the range
+    """
+    def __init__(self, min, max, inclusive=False):
+        self.min = min
+        self.max = max
+        try:
+            self.inclusive = [bool(x) for x in inclusive[:2]]
+        except TypeError:
+            self.inclusive = [bool(inclusive), bool(inclusive)]
+
+    def __contains__(self, x):
+        result = self.min < x < self.max
+        if self.inclusive[0]:
+            result = result or self.min <= x
+        if self.inclusive[1]:
+            result = result or x <= self.max
+        return result
+
 class Argument:
     def __init__(self, name, abbreviation=None, type=None, default=None,
                  required=None, help=None, metavar=None,
-                 cmd_type=None, cmd_help=None):
+                 cmd_type=None, cmd_help=None, valid_values=None):
         """Encode the type and documentation for a stage argument
 
         Argument objects store the details and parsing logic for
@@ -29,6 +52,7 @@ class Argument:
         :param metavar: If given, indicate the names of argument values on the command line
         :param cmd_type: If given, use a different pattern for command-line parsing
         :param cmd_help: If given, use a different documentation string for command-line parsing
+        :param valid_values: If given, the value for this argument should lie within the given parameter
         """
         self.name = name
         self.abbreviation = abbreviation
@@ -39,6 +63,7 @@ class Argument:
         self.metavar = metavar
         self.cmd_type = cmd_type
         self.cmd_help = cmd_help
+        self.valid_values = valid_values
 
         if self.abbreviation is not None:
             assert re.match('^-[a-z]$', self.abbreviation)
@@ -48,7 +73,12 @@ class Argument:
 
     def validate(self, value):
         """Coerce argument values into the pattern given for this argument"""
-        return match(self.type, value)
+        result = match(self.type, value)
+        if self.valid_values is not None and result not in self.valid_values:
+            msg = ('Value of parameter {} ("{}") not within the given '
+                   'valid set {}'.format(self.name, result, self.valid_values))
+            raise ValueError(msg)
+        return result
 
     def validate_cmd(self, value):
         """Coerce argument values from the command line into the pattern given for this argument.
