@@ -13,6 +13,9 @@ class Scope(dict):
         self._callbacks = {}
         super().__init__(*args, **kwargs)
 
+    def __contains__(self, key):
+        return super().__contains__(key) or key in self._callbacks
+
     def __getitem__(self, key):
         if key in self._callbacks:
             self[key] = self._callbacks.pop(key)()
