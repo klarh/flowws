@@ -6,6 +6,26 @@ import pkg_resources
 from .DirectoryStorage import DirectoryStorage
 from .GetarStorage import GetarStorage
 
+class Scope(dict):
+    """Simple dictionary that can parse callbacks"""
+
+    def __init__(self, *args, **kwargs):
+        self._callbacks = {}
+        super().__init__(*args, **kwargs)
+
+    def __getitem__(self, key):
+        if key in self._callbacks:
+            self[key] = self._callbacks.pop(key)()
+        return super().__getitem__(key)
+
+    def set_call(self, key, callback):
+        """Register a callback to later retrieve a value
+
+        :param key: dictionary key for this object to associate the callback with
+        :param callback: a parameter-free callable that returns the value to set
+        """
+        self._callbacks[key] = callback
+
 class Workflow:
     """Specify a complete sequence of operations to perform
 
@@ -164,7 +184,7 @@ class Workflow:
 
     def run(self):
         """Run each stage inside this workflow"""
-        scope = dict(self.scope)
+        scope = Scope(self.scope)
         scope['workflow'] = self
         for stage in self.stages:
             stage.run(scope, self.storage)
