@@ -6,3 +6,5 @@ from .Workflow import Workflow
 
 from .DirectoryStorage import DirectoryStorage
 from .GetarStorage import GetarStorage
+
+from .internal import try_to_import

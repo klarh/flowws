@@ -8,3 +8,5 @@ Workflows and Stages
 
 .. autoclass:: flowws.Stage
    :members:
+
+.. autofunction:: flowws.try_to_import
