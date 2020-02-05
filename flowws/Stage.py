@@ -85,8 +85,17 @@ class Stage:
     @classmethod
     def from_command(cls, args):
         """Initialize this stage from a command-line description"""
+        description = cls.__doc__
+        try:
+            # don't include :param: markup, for example
+            description = description[:description.index('\n:')]
+        except ValueError:
+            pass
+
         parser = argparse.ArgumentParser(
-            prog=cls.__name__, description=cls.__doc__)
+            prog=cls.__name__, description=description,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
 
         # map arg name -> Arg object
         arg_objects = {}
