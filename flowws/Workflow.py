@@ -21,6 +21,11 @@ class Scope(dict):
             self[key] = self._callbacks.pop(key)()
         return super().__getitem__(key)
 
+    def get(self, key, default=None):
+        if key in self._callbacks:
+            return self[key]
+        return super().get(key, default)
+
     def set_call(self, key, callback):
         """Register a callback to later retrieve a value
 
