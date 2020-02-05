@@ -3,8 +3,15 @@
 import os
 from setuptools import setup
 
-with open('flowws/version.py') as version_file:
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+version_fname = os.path.join(THIS_DIR, 'flowws', 'version.py')
+with open(version_fname) as version_file:
     exec(version_file.read())
+
+readme_fname = os.path.join(THIS_DIR, 'README.md')
+with open(readme_fname) as readme_file:
+    long_description = readme_file.read()
 
 setup(name='flowws',
       author='Matthew Spellings',
@@ -24,6 +31,8 @@ setup(name='flowws',
       extras_require={},
       install_requires=[],
       license='MIT',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       packages=[
           'flowws',
       ],

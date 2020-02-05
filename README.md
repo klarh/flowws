@@ -6,14 +6,21 @@ task workflows. The core library contains tools to abstract over
 storage locations and parse arguments in a uniform way for both python
 scripts and command-line-based execution.
 
-`flowws` is being developed in conjunction with
-[hoomd-flowws](https://github.com/klarh/hoomd_flowws), which
-implements a set of flowws modules for use with
-[hoomd-blue](https://github.com/glotzerlab/hoomd-blue).
+`flowws` is being developed in conjunction with other projects, including:
+
+- [hoomd-flowws](https://github.com/klarh/hoomd_flowws): perform simulations with [hoomd-blue](https://github.com/glotzerlab/hoomd-blue).
+- [flowws-analysis](https://github.com/klarh/flowws-analysis): run analysis and visualization workflows
+- [flowws-freud](https://github.com/klarh/flowws-freud): molecular simulation-specific modules for `flowws-analysis`
 
 ## Installation
 
-Install flowws from source using `pip`:
+Install flowws from PyPI:
+
+```
+pip install flowws
+```
+
+Alternatively, install from source:
 
 ```
 pip install git+https://github.com/klarh/flowws.git#egg=flowws
