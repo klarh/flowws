@@ -7,7 +7,14 @@ from .DirectoryStorage import DirectoryStorage
 from .GetarStorage import GetarStorage
 
 class Scope(dict):
-    """Simple dictionary that can parse callbacks"""
+    """Simple dictionary that can parse callbacks.
+
+    A callback can be registered for a key via `set_call`. Subsequent
+    calls to `scope[key]` or `scope.get(key)` will cause the callback
+    to populate the scope with the callback result. Calling `set_call`
+    will not necessarily add a key to the set of keys produced when
+    iterating over the dictionary for performance purposes.
+    """
 
     def __init__(self, *args, **kwargs):
         self._callbacks = {}
