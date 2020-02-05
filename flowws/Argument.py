@@ -1,7 +1,7 @@
 import argparse
 import re
 
-from .PatternMatcher import match
+from .PatternMatcher import match, parse_bool
 
 class Range:
     """Define a range of numeric values
@@ -25,6 +25,8 @@ class Range:
         if self.inclusive[1]:
             result = result or x <= self.max
         return result
+
+_type_parser_remap = {bool: parse_bool}
 
 class Argument:
     def __init__(self, name, abbreviation=None, type=None, default=None,
@@ -61,7 +63,7 @@ class Argument:
         self.required = required
         self.help = help
         self.metavar = metavar
-        self.cmd_type = cmd_type
+        self.cmd_type = _type_parser_remap.get(cmd_type, cmd_type)
         self.cmd_help = cmd_help
         self.valid_values = valid_values
 
@@ -69,7 +71,7 @@ class Argument:
             assert re.match('^-[a-z]$', self.abbreviation)
 
         if self.cmd_type is None:
-            self.cmd_type = self.type
+            self.cmd_type = _type_parser_remap.get(self.type, self.type)
 
     def validate(self, value):
         """Coerce argument values into the pattern given for this argument"""

@@ -1,6 +1,23 @@
 
 identity = lambda x: x
 
+def parse_bool(value):
+    """Parse a bool-like string or number in a reasonable way.
+
+    Integer strings are converted to an integer before converting to a
+    bool; case-insensitive variants of True and False are handled
+    appropriately. Other values raise a ValueError.
+    """
+    try:
+        return bool(int(value))
+    except ValueError:
+        lowercase = value.lower()
+        if lowercase == 'true':
+            return True
+        elif lowercase == 'false':
+            return False
+        raise ValueError('Unable to parse {} as a bool'.format(value))
+
 class MatchError(Exception):
     def __init__(self, pattern, value):
         self.pattern = pattern
@@ -26,6 +43,8 @@ class PatternMatcher:
             if isinstance(value, str):
                 return eval(value)
             return value
+        elif pattern is bool:
+            return parse_bool(value)
         elif callable(pattern):
             try:
                 result = pattern(value)
