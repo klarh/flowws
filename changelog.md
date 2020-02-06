@@ -1,4 +1,10 @@
 
+# v0.2.1 - 2020/02/06
+
+## Fixed
+- Parsing for bool-type arguments
+- Fixed and clarified behavior of `Scope` for registered callbacks
+
 # v0.2.0 - 2020/02/05
 
 ## Added
