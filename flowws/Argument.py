@@ -1,7 +1,7 @@
 import argparse
 import re
 
-from .PatternMatcher import match, parse_bool
+from .PatternMatcher import identity, match, parse_bool
 
 class Range:
     """Define a range of numeric values
@@ -29,7 +29,7 @@ class Range:
 _type_parser_remap = {bool: parse_bool}
 
 class Argument:
-    def __init__(self, name, abbreviation=None, type=None, default=None,
+    def __init__(self, name, abbreviation=None, type=identity, default=None,
                  required=None, help=None, metavar=None,
                  cmd_type=None, cmd_help=None, valid_values=None):
         """Encode the type and documentation for a stage argument
