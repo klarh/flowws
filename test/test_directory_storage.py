@@ -15,3 +15,6 @@ class TestDirectoryStorage(unittest.TestCase, StorageTestBase):
 
     def tearDown(self):
         self.tempdir.cleanup()
+
+if __name__ == '__main__':
+    unittest.main()
