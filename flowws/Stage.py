@@ -85,7 +85,7 @@ class Stage:
     @classmethod
     def from_command(cls, args):
         """Initialize this stage from a command-line description"""
-        description = cls.__doc__
+        description = cls.__doc__ or ''
         try:
             # don't include :param: markup, for example
             description = description[:description.index('\n:')]
