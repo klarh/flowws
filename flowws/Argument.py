@@ -63,7 +63,10 @@ class Argument:
         self.required = required
         self.help = help
         self.metavar = metavar
-        self.cmd_type = _type_parser_remap.get(cmd_type, cmd_type)
+        try:
+            self.cmd_type = _type_parser_remap.get(cmd_type, cmd_type)
+        except TypeError: # cmd_type was unhashable
+            self.cmd_type = cmd_type
         self.cmd_help = cmd_help
         self.valid_values = valid_values
 
@@ -71,7 +74,10 @@ class Argument:
             assert re.match('^-[a-z]$', self.abbreviation)
 
         if self.cmd_type is None:
-            self.cmd_type = _type_parser_remap.get(self.type, self.type)
+            try:
+                self.cmd_type = _type_parser_remap.get(self.type, self.type)
+            except TypeError: # type was unhashable
+                self.cmd_type = self.type
 
     def validate(self, value):
         """Coerce argument values into the pattern given for this argument"""
