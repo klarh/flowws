@@ -5,7 +5,7 @@ import unittest
 
 import flowws
 
-from .internal import StorageTestBase
+from internal import StorageTestBase
 
 class TestTarStorage(unittest.TestCase, StorageTestBase):
     def setUp(self):
