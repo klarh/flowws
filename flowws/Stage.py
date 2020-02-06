@@ -53,6 +53,12 @@ class Stage:
         arg_values = {arg.name: arg.default for arg in self.ARGS
                       if arg.default is not None}
 
+        missing_args = [arg.name for arg in self.ARGS
+                        if arg.required and arg.name not in kwargs]
+        if missing_args:
+            the_names = ', '.join(missing_args)
+            raise ValueError('Missing one or more arguments: {}'.format(the_names))
+
         for arg_name in kwargs:
             if arg_name in self.arg_specifications:
                 specification = self.arg_specifications[arg_name]
