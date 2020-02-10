@@ -4,7 +4,12 @@
 `flowws` is an in-development framework for building modular, reusable
 task workflows. The core library contains tools to abstract over
 storage locations and parse arguments in a uniform way for both python
-scripts and command-line-based execution.
+scripts and command-line-based execution. It is designed to help solve
+the following problems:
+
+- Composing tasks from a series of modular actions
+- Parameterizing tasks and exposing interfaces for both interactive and batch execution
+- Improving reproducibility by encapsulating parameters within workflow definitions
 
 `flowws` is being developed in conjunction with other projects, including:
 
