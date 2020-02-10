@@ -40,5 +40,6 @@ documentation from source:
 ```
 git clone https://github.com/klarh/flowws
 cd flowws/doc
+pip install -r requirements.txt
 make html
 ```
