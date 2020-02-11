@@ -7,7 +7,7 @@ import sys
 logger = logging.getLogger(__name__)
 
 def add_stage_arguments(cls):
-    """Adds the arguments specified in a class's ARGS entry to its docstring"""
+    """Adds the arguments specified in a class's ARGS entry to its docstring."""
 
     if cls.__doc__ is None:
         cls.__doc__ = ''
@@ -26,7 +26,7 @@ def add_stage_arguments(cls):
     return cls
 
 class Stage:
-    """Base class for the building blocks of workflows
+    """Base class for the building blocks of workflows.
 
     Stage objects specify a discrete set of operations within a
     Workflow. Each Stage object has its own set of parameters and
@@ -39,7 +39,8 @@ class Stage:
         stages = [Initialize(seed=13), Run(parameter=1.5)]
 
     Stages also can be instantiated from the command line using
-    `flowws.run`::
+    `flowws.run` (assuming they have been properly registered using
+    setuptools `entry_points`)::
 
         python -m flowws.run Initialize --seed 13 Run --parameter 1.5
 

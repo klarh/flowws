@@ -4,7 +4,7 @@ import re
 from .PatternMatcher import identity, match, parse_bool
 
 class Range:
-    """Define a range of numeric values
+    """Define a range of numeric values.
 
     :param min: minimum value of the range
     :param max: maximum value of the range
@@ -32,7 +32,7 @@ class Argument:
     def __init__(self, name, abbreviation=None, type=identity, default=None,
                  required=None, help=None, metavar=None,
                  cmd_type=None, cmd_help=None, valid_values=None):
-        """Encode the type and documentation for a stage argument
+        """Encode the type and documentation for a stage argument.
 
         Argument objects store the details and parsing logic for
         Stages, which can be given arguments directly within python,
@@ -80,7 +80,7 @@ class Argument:
                 self.cmd_type = self.type
 
     def validate(self, value):
-        """Coerce argument values into the pattern given for this argument"""
+        """Coerce argument values into the pattern given for this argument."""
         result = match(self.type, value)
         if self.valid_values is not None and result not in self.valid_values:
             msg = ('Value of parameter {} ("{}") not within the given '

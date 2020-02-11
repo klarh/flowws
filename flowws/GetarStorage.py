@@ -34,12 +34,11 @@ class GetarTextBuffer(io.StringIO):
         super(GetarTextBuffer, self).close()
 
 class GetarStorage(Storage):
-    """Class to store files as records of getar-format files
+    """Class to store files as records of getar-format files.
 
     These can be zip, tar, or sqlite-formatted archives. Note that zip
     and tar files will currently accumulate copies of files as they
     are appended to or overwritten.
-
     """
     def __init__(self, target, group=None):
         try:

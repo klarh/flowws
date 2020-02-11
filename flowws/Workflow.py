@@ -34,7 +34,7 @@ class Scope(dict):
         return super().get(key, default)
 
     def set_call(self, key, callback):
-        """Register a callback to later retrieve a value
+        """Register a callback to later retrieve a value.
 
         :param key: dictionary key for this object to associate the callback with
         :param callback: a parameter-free callable that returns the value to set
@@ -42,7 +42,7 @@ class Scope(dict):
         self._callbacks[key] = callback
 
 class Workflow:
-    """Specify a complete sequence of operations to perform
+    """Specify a complete sequence of operations to perform.
 
     Workflow objects specify a sequence of stages (operations to
     perform) and a storage object to use (which could be a database,
@@ -50,9 +50,15 @@ class Workflow:
     addition to direct creation within python, Workflows can be
     deserialized from command line and JSON-based descriptions.
 
+    Stages are executed sequentially in the order they are given and
+    each stage can pass information to later stages in a freeform way
+    by settings elements of a *scope*, which is a dictionary of named
+    values.
+
     :param stages: List of `Stage` objects specifying the operations to perform
     :param storage: `Storage` object specifying where results should be saved
     :param scope: Dictionary of key-value pairs specifying external input parameters
+
     """
     def __init__(self, stages, storage, scope={}):
         self.stages = stages
@@ -61,7 +67,7 @@ class Workflow:
 
     @classmethod
     def from_JSON(cls, json_object, module_names='flowws_modules'):
-        """Construct a Workflow from a JSON object"""
+        """Construct a Workflow from a JSON object."""
         modules = cls.get_named_modules(module_names)
 
         storage_args = dict(json_object['storage'])
@@ -112,7 +118,7 @@ class Workflow:
         """Construct a Workflow from a command-line description.
 
         Stages are found based on setuptools entry_point specified
-        under `module_names`
+        under `module_names`.
 
         :param args: List of command-line arguments (list of strings)
         :param module_names: setuptools entry_point to use for module searches
@@ -198,7 +204,7 @@ class Workflow:
         return cls(workflow_stages, storage, scope)
 
     def run(self):
-        """Run each stage inside this workflow"""
+        """Run each stage inside this workflow."""
         scope = Scope(self.scope)
         scope['workflow'] = self
         for stage in self.stages:
