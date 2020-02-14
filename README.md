@@ -16,6 +16,7 @@ the following problems:
 - [hoomd-flowws](https://github.com/klarh/hoomd_flowws): perform simulations with [hoomd-blue](https://github.com/glotzerlab/hoomd-blue).
 - [flowws-analysis](https://github.com/klarh/flowws-analysis): run analysis and visualization workflows
 - [flowws-freud](https://github.com/klarh/flowws-freud): molecular simulation-specific modules for `flowws-analysis`
+- [flowws-examples](http://github.com/klarh/flowws-examples): example workflows using the above projects
 
 ## Installation
 
@@ -43,3 +44,9 @@ cd flowws/doc
 pip install -r requirements.txt
 make html
 ```
+
+## Examples
+
+The [flowws-examples](http://github.com/klarh/flowws-examples) project
+contains interactive notebook examples that demonstrate various
+workflows.
