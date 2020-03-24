@@ -51,7 +51,7 @@ class Stage:
     def __init__(self, **kwargs):
         self.arg_specifications = {arg.name: copy.deepcopy(arg) for arg in self.ARGS}
         unused_args = []
-        arg_values = {arg.name: arg.default for arg in self.ARGS
+        arg_values = {arg.name: copy.deepcopy(arg.default) for arg in self.ARGS
                       if arg.default is not None}
 
         missing_args = [arg.name for arg in self.ARGS
