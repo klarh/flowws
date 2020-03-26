@@ -1,5 +1,6 @@
+[![ReadTheDocs](https://img.shields.io/readthedocs/flowws.svg?style=flat)](https://flowws.readthedocs.io/en/latest/)
 
-## Introduction
+# Introduction
 
 `flowws` is an in-development framework for building modular, reusable
 task workflows. The core library contains tools to abstract over
