@@ -56,11 +56,14 @@ class Workflow:
     values.
 
     :param stages: List of `Stage` objects specifying the operations to perform
-    :param storage: `Storage` object specifying where results should be saved
+    :param storage: `Storage` object specifying where results should be saved (default: create a DirectoryStorage using the current working directory)
     :param scope: Dictionary of key-value pairs specifying external input parameters
 
     """
-    def __init__(self, stages, storage, scope={}):
+    def __init__(self, stages, storage=None, scope={}):
+        if storage is None:
+            storage = DirectoryStorage()
+
         self.stages = stages
         self.storage = storage
         self.scope = dict(scope)
