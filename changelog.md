@@ -1,3 +1,8 @@
+# v0.3.0 - 2020/05/05
+
+## Added
+- Made `Workflow` constructor simply create a `DirectoryStorage` in the current working directory by default
+
 # v0.2.2 - 2020/03/27
 
 ## Fixed
