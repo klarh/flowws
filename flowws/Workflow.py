@@ -207,8 +207,13 @@ class Workflow:
         return cls(workflow_stages, storage, scope)
 
     def run(self):
-        """Run each stage inside this workflow."""
+        """Run each stage inside this workflow.
+
+        Returns the scope after running all stages.
+        """
         scope = Scope(self.scope)
         scope['workflow'] = self
         for stage in self.stages:
             stage.run(scope, self.storage)
+
+        return scope
