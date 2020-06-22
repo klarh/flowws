@@ -1,4 +1,5 @@
 import argparse
+import copy
 import datetime
 import json
 import pkg_resources
@@ -22,6 +23,11 @@ class Scope(dict):
 
     def __contains__(self, key):
         return super().__contains__(key) or key in self._callbacks
+
+    def __copy__(self):
+        result = Scope(self)
+        result._callbacks = copy.copy(self._callbacks)
+        return result
 
     def __getitem__(self, key):
         if key in self._callbacks:
