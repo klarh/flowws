@@ -1,3 +1,9 @@
+# v0.4.0 - 2020/06/24
+
+## Added
+- Workflow.run() now returns the final scope object
+- Shallow copies of Scope objects support callbacks
+
 # v0.3.0 - 2020/05/05
 
 ## Added
