@@ -1,4 +1,4 @@
-[![ReadTheDocs](https://img.shields.io/readthedocs/flowws.svg?style=flat)](https://flowws.readthedocs.io/en/latest/)
+[![ReadTheDocs](https://img.shields.io/readthedocs/flowws.svg?style=flat)](https://flowws.readthedocs.io/en/latest/) [![Join the chat at https://gitter.im/flowws-python/community](https://badges.gitter.im/flowws-python/community.svg)](https://gitter.im/flowws-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # Introduction
 
