@@ -33,7 +33,7 @@ def try_to_import(pkg, name, current_pkg=None):
     try:
         mod = importlib.import_module(pkg, current_pkg)
         result = getattr(mod, name)
-    except ImportError as e:
+    except (ImportError, AttributeError) as e:
         result = FailedImport(e)
 
     return result
