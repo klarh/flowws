@@ -1,6 +1,8 @@
 import argparse
+import collections
 import copy
 import datetime
+import functools
 import json
 import pkg_resources
 
@@ -66,6 +68,16 @@ class Workflow:
     :param scope: Dictionary of key-value pairs specifying external input parameters
 
     """
+
+    _additional_entry_points = collections.defaultdict(lambda: {})
+
+    class _FakeEntryPoint:
+        def __init__(self, target):
+            self.target = target
+
+        def load(self):
+            return self.target
+
     def __init__(self, stages, storage=None, scope={}):
         if storage is None:
             storage = DirectoryStorage()
@@ -115,11 +127,13 @@ class Workflow:
                       scope=self.scope)
         return result
 
-    @staticmethod
-    def get_named_modules(module_names):
+    @classmethod
+    def get_named_modules(cls, module_names):
         modules = {}
         for entry_point in pkg_resources.iter_entry_points(module_names):
             modules[entry_point.name] = entry_point
+        for name, entry_point in cls._additional_entry_points[module_names].items():
+            modules[name] = entry_point
         return modules
 
     @classmethod
@@ -212,6 +226,39 @@ class Workflow:
 
         return cls(workflow_stages, storage, scope)
 
+    @classmethod
+    def register_module(cls, *args, module_names='flowws_modules', name=None):
+        """Register a named module to be loaded inside `from_JSON` or other functions.
+
+        This method is intended to be used as a decorator for Stage
+        classes in situations such as REPL loops or notebooks, where
+        modules need to be deserialized without necessarily creating a
+        standalone package and registering the endpoints through the
+        setuptools machinery.
+
+        Examples::
+
+            @flowws.Workflow.register_module
+            class TestStage(flowws.Stage):
+                pass
+
+            @flowws.Workflow.register_module(name='OverruledName')
+            class Stage(flowws.Stage):
+                pass
+
+        """
+        if len(args) == 1:
+            module = args[0]
+            name = name or module.__name__
+            cls._additional_entry_points[module_names][name] = \
+                cls._FakeEntryPoint(module)
+            return module
+        elif len(args) > 1:
+            raise ValueError('Too many positional arguments: {}'.format(args))
+
+        return functools.partial(
+            cls.register_module, module_names=module_names, name=name)
+
     def run(self):
         """Run each stage inside this workflow.
 
@@ -223,3 +270,5 @@ class Workflow:
             stage.run(scope, self.storage)
 
         return scope
+
+register_module = Workflow.register_module
