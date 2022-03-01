@@ -2,6 +2,7 @@ import argparse
 import copy
 import inspect
 import logging
+import pkg_resources
 import sys
 
 logger = logging.getLogger(__name__)
@@ -85,7 +86,18 @@ class Stage:
         return cls(**json_object['arguments'])
 
     def to_JSON(self):
-        result = dict(type=type(self).__name__,
+        Cls = type(self)
+        name = Cls.__name__
+        module = Cls.__module__
+        full_name = '.'.join([module, name])
+        for ent in pkg_resources.iter_entry_points('flowws_modules', full_name):
+            accept = ent.module_name == module and ent.attrs[0] == name
+            accept = accept and ent.load() is Cls
+            if accept:
+                name = ent.name
+                break
+
+        result = dict(type=name,
                       arguments=dict(self.arguments))
         return result
 
