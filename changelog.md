@@ -1,3 +1,14 @@
+# v0.5.0 - 2022/04/01
+
+## Added
+
+- `register_module` function for easier notebook or REPL development
+- Use fully-qualified module name when saving workflows to JSON
+
+## Fixed
+
+- Catch OSError in `try_to_import`
+
 # v0.4.0 - 2020/06/24
 
 ## Added
