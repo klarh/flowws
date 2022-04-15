@@ -3,6 +3,7 @@ import collections
 import copy
 import datetime
 import functools
+import importlib
 import json
 import pkg_resources
 
@@ -104,7 +105,13 @@ class Workflow:
         stages = []
         for stage_json in stages_json:
             stage_json = dict(stage_json)
-            stage_cls = modules[stage_json.pop('type')].load()
+            stage_type = stage_json.pop('type')
+            try:
+                module_name = stage_json.pop('module_name')
+                module = importlib.import_module(module_name)
+                stage_cls = getattr(module, stage_type)
+            except (KeyError, AttributeError, ModuleNotFoundError):
+                stage_cls = modules[stage_type].load()
             stages.append(stage_cls.from_JSON(stage_json))
 
         scope = json_object.get('scope', {})

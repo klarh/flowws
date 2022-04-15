@@ -89,16 +89,10 @@ class Stage:
         Cls = type(self)
         name = Cls.__name__
         module = Cls.__module__
-        full_name = '.'.join([module, name])
-        for ent in pkg_resources.iter_entry_points('flowws_modules', full_name):
-            accept = ent.module_name == module and ent.attrs[0] == name
-            accept = accept and ent.load() is Cls
-            if accept:
-                name = ent.name
-                break
-
         result = dict(type=name,
-                      arguments=dict(self.arguments))
+                      arguments=dict(self.arguments),
+                      module_name=module,
+                      )
         return result
 
     @classmethod
