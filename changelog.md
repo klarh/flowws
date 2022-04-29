@@ -9,6 +9,12 @@
 
 - Catch OSError in `try_to_import`
 
+# v0.5.1 - 2022/04/29
+
+## Fixed
+
+- Fix module serialization
+
 # v0.4.0 - 2020/06/24
 
 ## Added
