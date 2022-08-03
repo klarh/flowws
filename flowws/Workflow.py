@@ -114,9 +114,9 @@ class Workflow:
                 stage_cls = modules[stage_type].load()
             stages.append(stage_cls.from_JSON(stage_json))
 
-        scope = json_object.get('scope', {})
+        scope = dict(json_object.get('scope', {}))
 
-        metadata = scope.get('metadata', {})
+        metadata = dict(scope.get('metadata', {}))
         metadata['invocation'] = dict(
             name='from_JSON', source=json_object,
             module_names=module_names,
