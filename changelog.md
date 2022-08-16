@@ -1,3 +1,15 @@
+# v0.5.2 - 2022/08/16
+
+## Fixed
+
+- Fix mutation of input scope in `Workflow.from_JSON()`
+
+# v0.5.1 - 2022/04/29
+
+## Fixed
+
+- Fix module serialization
+
 # v0.5.0 - 2022/04/01
 
 ## Added
@@ -8,12 +20,6 @@
 ## Fixed
 
 - Catch OSError in `try_to_import`
-
-# v0.5.1 - 2022/04/29
-
-## Fixed
-
-- Fix module serialization
 
 # v0.4.0 - 2020/06/24
 
