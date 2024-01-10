@@ -273,7 +273,7 @@ class Workflow:
         Returns the scope after running all stages.
         """
         scope = Scope(self.scope)
-        scope['workflow'] = self
+        scope['workflow'] = scope['flowws.workflow'] = self
         with contextlib.ExitStack() as stack:
             scope['flowws.exit_stack'] = stack
             for stage in self.stages:
