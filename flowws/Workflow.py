@@ -1,5 +1,6 @@
 import argparse
 import collections
+import contextlib
 import copy
 import datetime
 import functools
@@ -273,8 +274,10 @@ class Workflow:
         """
         scope = Scope(self.scope)
         scope['workflow'] = self
-        for stage in self.stages:
-            stage.run(scope, self.storage)
+        with contextlib.ExitStack() as stack:
+            scope['flowws.exit_stack'] = stack
+            for stage in self.stages:
+                stage.run(scope, self.storage)
 
         return scope
 
