@@ -1,3 +1,16 @@
+# v0.6.0 - 2024/01/10
+
+## Added
+
+- `flowws.exit_stack` element to scopes inside `Workflow.run()`
+- Expose workflow using `flowws.workflow` key in addition to just `workflow`
+
+# v0.5.3 - 2023/12/06
+
+## Fixed
+
+- Fix ignored files in version control (.gitignore)
+
 # v0.5.2 - 2022/08/16
 
 ## Fixed
